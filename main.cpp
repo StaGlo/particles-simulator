@@ -54,6 +54,7 @@ int main(int argc, char **argv)
 
     Simulator sim(0.01);
 
+    srand(0); // Constant seed for reproducibility
     for (int i = 0; i < particles; i++)
     {
         Particle p(rand() % int(SPHERE_RADIUS) - SPHERE_RADIUS / 2,
