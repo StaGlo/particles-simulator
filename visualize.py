@@ -1,7 +1,7 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
-from matplotlib.animation import FuncAnimation
+from matplotlib.animation import FuncAnimation, PillowWriter
 import numpy as np
 
 
@@ -69,6 +69,12 @@ title = ax.set_title("3D Particle Simulation")
 
 # Create animation
 ani = FuncAnimation(
-    fig, update_graph, frames=len(timestep_data), interval=50, repeat=False
+    fig,
+    update_graph,
+    frames=len(timestep_data),
+    interval=10,
+    repeat=False,
 )
 plt.show()
+
+ani.save("particle_simulation.gif", writer=PillowWriter(fps=30))
