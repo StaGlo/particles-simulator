@@ -41,7 +41,10 @@ public:
     // Getters
     unsigned long long int getCollisions() const { return collisions; }
     int getNumParticles() const { return num_particles; }
-};
 
+    // Setters
+    void setBlockSize(int block_size) { this->block_size = block_size; }
+    void setNumBlocks(int num_blocks) { this->num_blocks = num_blocks; }
+};
 
 #endif // SIMULATOR_HPP

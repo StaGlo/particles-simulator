@@ -6,9 +6,6 @@ Simulator::Simulator(double timestep, int max_num_Particles)
     this->max_num_Particles = max_num_Particles;
     num_particles = 0;
     h_particles = new Particle[max_num_Particles];
-
-    block_size = 256;
-    num_blocks = (num_particles + block_size - 1) / block_size;
 }
 
 Simulator::~Simulator()
@@ -51,12 +48,19 @@ void Simulator::updateSystem()
 
 void Simulator::run(std::string filename, int numIterations)
 {
+    if (std::filesystem::exists(filename))
+    {
+        std::filesystem::remove(filename);
+    }
+
     allocateDeviceMemory();
     copyToDevice();
+    std::cout << "Running simulation" << std::endl;
     for (int i = 0; i < numIterations; i++)
     {
-        // updateSystemKernel<<<num_blocks, block_size>>>(d_particles, num_particles, timestep);
-        updateSystem();
+        // updateSystem();
+        updateSystemKernel<<<num_blocks, block_size>>>(d_particles, num_particles, timestep);
+        cudaDeviceSynchronize();
         cudaDeviceSynchronize();
         copyFromDevice();
         saveParticlePositions(filename, i);
@@ -75,4 +79,17 @@ void Simulator::saveParticlePositions(std::string filename, int timestepIndex)
     }
 
     file.close();
+}
+
+__global__ void updateSystemKernel(Particle *particles, int num_particles, double timestep)
+{
+    int i = blockIdx.x * blockDim.x + threadIdx.x;
+    if (i < num_particles)
+    {
+        // particles[i].updatePosition(timestep);
+        // Update position
+        particles[i].x += particles[i].vx * timestep;
+        particles[i].y += particles[i].vy * timestep;
+        particles[i].z += particles[i].vz * timestep;
+    }
 }

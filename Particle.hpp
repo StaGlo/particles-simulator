@@ -1,6 +1,9 @@
 #ifndef PARTICLE_HPP
 #define PARTICLE_HPP
 
+#include <cuda_runtime.h>
+#include <iostream>
+
 class Particle
 {
 public:

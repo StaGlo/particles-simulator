@@ -64,7 +64,11 @@ int main(int argc, char **argv)
         sim.addParticle(p);
     }
 
-        auto start = std::chrono::high_resolution_clock::now();
+    int blokc_size = 256;
+    sim.setBlockSize(blokc_size);
+    sim.setNumBlocks((num_particles + blokc_size - 1) / blokc_size);
+
+    auto start = std::chrono::high_resolution_clock::now();
     sim.run("particles.csv", num_iterations);
     auto end = std::chrono::high_resolution_clock::now();
     std::chrono::duration<double> elapsed = end - start;

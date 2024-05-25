@@ -13,11 +13,3 @@ __host__ __device__ void Particle::updatePosition(double timestep)
     z += vz * timestep;
 }
 
-__global__ void updateSystemKernel(Particle *particles, int num_particles, double timestep)
-{
-    int i = blockIdx.x * blockDim.x + threadIdx.x;
-    if (i < num_particles)
-    {
-        particles[i].updatePosition(timestep);
-    }
-}
