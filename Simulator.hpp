@@ -16,21 +16,26 @@
 class Simulator
 {
 public:
-    std::vector<Particle> particles;
-    double timestep;
-    const int width = 100;
-    const int height = 100;
-    const int depth = 100;
+    Particle *h_particles;
+    Particle *d_particles;
 
-    long collisions = 0;
+    int numParticles, maxNumParticles;
+    double timestep;
+    unsigned long long int collisions = 0;
 
 public:
-    Simulator(double timestep);
+    Simulator(double timestep, int numParticles);
+    ~Simulator();
+
+    // CUDA functions
+    void allocateDeviceMemory();
+    void copyToDevice();
+    void copyFromDevice();
+    void freeDeviceMemory();
 
     void updateSystem();
     void addParticle(const Particle &p);
     void run(std::string filename, int numIterations);
-    void visualize();
     long get_collisions() { return collisions; }
     void saveParticlePositions(std::string filename, int timestep);
 };
