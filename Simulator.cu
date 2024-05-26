@@ -29,6 +29,7 @@ void Simulator::copyFromDevice()
 {
     cudaMemcpy(h_particles, d_particles, num_particles * sizeof(Particle), cudaMemcpyDeviceToHost);
     cudaMemcpy(&h_collisions, d_collisions, sizeof(unsigned long long int), cudaMemcpyDeviceToHost);
+    h_collisions /= 2; // Each collision is counted twice
 }
 
 void Simulator::freeDeviceMemory()
