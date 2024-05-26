@@ -9,7 +9,13 @@
 #include <iomanip>
 #include <filesystem>
 #include <cuda_runtime.h>
-#include "Particle.hpp"
+
+struct Particle
+{
+    double x, y, z;
+    double vx, vy, vz;
+    double mass, radius;
+};
 
 class Simulator
 {
@@ -18,25 +24,18 @@ public:
     Particle *d_particles;
 
     int block_size, num_blocks;
-    int num_particles, max_num_Particles;
+    int num_particles, max_num_particles;
     double timestep;
     unsigned long long int collisions = 0;
 
 public:
-    Simulator(double timestep, int num_particles);
+    Simulator(double timestep, int max_num_particles);
     ~Simulator();
-
-    // CUDA functions
-    void allocateDeviceMemory();
-    void copyToDevice();
-    void copyFromDevice();
-    void freeDeviceMemory();
 
     // Simulation functions
     void run(std::string filename, int numIterations);
     void addParticle(const Particle &p);
     void saveParticlePositions(std::string filename, int timestep);
-    void updateSystem();
 
     // Getters
     unsigned long long int getCollisions() const { return collisions; }
@@ -46,5 +45,8 @@ public:
     void setBlockSize(int block_size) { this->block_size = block_size; }
     void setNumBlocks(int num_blocks) { this->num_blocks = num_blocks; }
 };
+
+// Kernel function declaration
+__global__ void updateSystemKernel(Particle *particles, int n, double timestep);
 
 #endif // SIMULATOR_HPP
