@@ -14,19 +14,29 @@ struct Particle
 {
     double x, y, z;
     double vx, vy, vz;
+    double vx_new, vy_new, vz_new;
     double mass, radius;
 };
 
 class Simulator
 {
-public:
+private:
     Particle *h_particles;
     Particle *d_particles;
+    unsigned long long int *d_collisions;
+    unsigned long long int h_collisions;
 
     int block_size, num_blocks;
     int num_particles, max_num_particles;
     double timestep;
-    unsigned long long int collisions = 0;
+
+    void allocateDeviceMemory();
+    void copyToDevice();
+    void copyFromDevice();
+    void freeDeviceMemory();
+    
+    void updateSystem();
+    void saveParticlePositions(std::string filename, int timestep);
 
 public:
     Simulator(double timestep, int max_num_particles);
@@ -35,10 +45,9 @@ public:
     // Simulation functions
     void run(std::string filename, int numIterations);
     void addParticle(const Particle &p);
-    void saveParticlePositions(std::string filename, int timestep);
 
     // Getters
-    unsigned long long int getCollisions() const { return collisions; }
+    unsigned long long int getCollisions() const { return h_collisions; }
     int getNumParticles() const { return num_particles; }
 
     // Setters
@@ -47,6 +56,8 @@ public:
 };
 
 // Kernel function declaration
-__global__ void updateSystemKernel(Particle *particles, int n, double timestep);
+__global__ void updatePositionsCheckBoundaryCollisions(Particle *particles, int num_particles, double timestep);
+__global__ void checkCollisions(Particle *particles, int num_particles, unsigned long long int *d_collisions);
+__global__ void updateVelocities(Particle *particles, int num_particles);
 
 #endif // SIMULATOR_HPP
