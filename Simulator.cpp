@@ -59,12 +59,13 @@ void Simulator::updateSystem()
                 double v2x_old = particles[j].vx, v2y_old = particles[j].vy, v2z_old = particles[j].vz;
 
                 // Compute new velocities using elastic collision formulas
-                double v1x_new = (v1x_old * (m1 - m2) + 2 * m2 * v2x_old) / (m1 + m2);
-                double v1y_new = (v1y_old * (m1 - m2) + 2 * m2 * v2y_old) / (m1 + m2);
-                double v1z_new = (v1z_old * (m1 - m2) + 2 * m2 * v2z_old) / (m1 + m2);
-                double v2x_new = (v2x_old * (m2 - m1) + 2 * m1 * v1x_old) / (m1 + m2);
-                double v2y_new = (v2y_old * (m2 - m1) + 2 * m1 * v1y_old) / (m1 + m2);
-                double v2z_new = (v2z_old * (m2 - m1) + 2 * m1 * v1z_old) / (m1 + m2);
+                double mass_k = 1.0 / (m1 + m2);
+                double v1x_new = (v1x_old * (m1 - m2) + 2 * m2 * v2x_old) / mass_k;
+                double v1y_new = (v1y_old * (m1 - m2) + 2 * m2 * v2y_old) / mass_k;
+                double v1z_new = (v1z_old * (m1 - m2) + 2 * m2 * v2z_old) / mass_k;
+                double v2x_new = (v2x_old * (m2 - m1) + 2 * m1 * v1x_old) / mass_k;
+                double v2y_new = (v2y_old * (m2 - m1) + 2 * m1 * v1y_old) / mass_k;
+                double v2z_new = (v2z_old * (m2 - m1) + 2 * m1 * v1z_old) / mass_k;
 
 #pragma omp critical
                 {
